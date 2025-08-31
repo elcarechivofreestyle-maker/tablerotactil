@@ -27,14 +27,14 @@
     #startZone {
       display: flex;
       gap: 10px;
-      margin: 80px auto 20px auto;
+      margin: 20px auto 40px auto;
       justify-content: center;
       flex-wrap: wrap;
     }
 
     .startCell {
-      width: 70px;
-      height: 70px;
+      width: 84px;
+      height: 84px;
       border: 2px dashed #999;
       position: relative;
       background: #fff;
@@ -42,14 +42,14 @@
     }
 
     .piece {
-      width: 60px;
-      height: 60px;
+      width: 72px;
+      height: 72px;
       background-size: cover;
       background-position: center;
       border-radius: 50%;
       position: absolute;
-      top: 5px;
-      left: 5px;
+      top: 6px;
+      left: 6px;
       touch-action: none;
       cursor: grab;
       z-index: 10;
@@ -58,15 +58,16 @@
 
     #boardWrapper {
       position: relative;
-      width: 90vw;
-      max-width: 800px;
-      margin-bottom: 40px;
+      width: 95vw;
+      max-width: 900px;
+      margin-bottom: 20px;
+      transform: rotate(180deg);
     }
 
     #board {
       display: grid;
-      grid-template-columns: repeat(10, 60px);
-      grid-template-rows: repeat(4, 60px);
+      grid-template-columns: repeat(10, 72px);
+      grid-template-rows: repeat(4, 72px);
       gap: 4px;
       background: #222;
       padding: 10px;
@@ -74,8 +75,8 @@
     }
 
     .cell {
-      width: 60px;
-      height: 60px;
+      width: 72px;
+      height: 72px;
       position: relative;
       border: 1px solid #aaa;
     }
@@ -88,20 +89,21 @@
     /* Casillas extra */
     .extra {
       position: absolute;
-      width: 60px;
-      height: 60px;
+      width: 72px;
+      height: 72px;
       border: 2px solid #000;
-      background: #ffeb3b;
+      background: #000;
       z-index: 5;
     }
 
     #extra1 {
-      bottom: -70px;
-      left: 0;
+      top: 50%;
+      left: -80px;
+      transform: translateY(-50%);
     }
 
     #extra2 {
-      top: -70px;
+      top: -80px;
       right: 0;
     }
   </style>
@@ -110,6 +112,12 @@
 
   <button id="resetBtn" onclick="resetBoard()">Reiniciar</button>
 
+  <div id="boardWrapper">
+    <div id="board"></div>
+    <div class="extra" id="extra1"></div>
+    <div class="extra" id="extra2"></div>
+  </div>
+
   <div id="startZone">
     <div class="startCell" id="s0"><div class="piece" id="p0" draggable="true" style="background-image: url('img/ficha1.png');"></div></div>
     <div class="startCell" id="s1"><div class="piece" id="p1" draggable="true" style="background-image: url('img/ficha2.png');"></div></div>
@@ -117,12 +125,6 @@
     <div class="startCell" id="s3"><div class="piece" id="p3" draggable="true" style="background-image: url('img/ficha4.png');"></div></div>
     <div class="startCell" id="s4"><div class="piece" id="p4" draggable="true" style="background-image: url('img/ficha5.png');"></div></div>
     <div class="startCell" id="s5"><div class="piece" id="p5" draggable="true" style="background-image: url('img/ficha6.png');"></div></div>
-  </div>
-
-  <div id="boardWrapper">
-    <div id="board"></div>
-    <div class="extra" id="extra1"></div>
-    <div class="extra" id="extra2"></div>
   </div>
 
   <script>
