@@ -2,52 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Tablero Freestyle</title>
+  <title>Tablero Interactivo</title>
   <style>
     body {
-      margin: 0;
-      background: #111;
+      background: #f0f0f0;
       font-family: sans-serif;
-      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0;
+      padding: 20px;
     }
 
     #startZone {
       display: flex;
       gap: 10px;
-      padding: 10px;
-      background: #222;
-      border-bottom: 2px solid #555;
-      min-height: 100px;
-      width: 100%;
-      justify-content: center;
+      margin-bottom: 20px;
     }
 
-    #board {
-      display: grid;
-      grid-template-columns: repeat(6, 60px);
-      grid-template-rows: repeat(6, 60px);
-      gap: 2px;
-      margin: 20px 0;
-    }
-
-    .cell {
-      border: 2px solid black;
+    .startCell {
+      width: 70px;
+      height: 70px;
+      border: 2px dashed #999;
       position: relative;
-      width: 60px;
-      height: 60px;
+      background: #fff;
+      border-radius: 10px;
     }
-
-    .cell:nth-child(3n) { background-color: red; }
-    .cell:nth-child(4n) { background-color: blue; }
-    .cell:nth-child(5n) { background-color: white; }
 
     .piece {
-      width: 50px;
-      height: 50px;
-      background: gold;
+      width: 60px;
+      height: 60px;
+      background-size: cover;
+      background-position: center;
       border-radius: 50%;
       position: absolute;
       top: 5px;
@@ -57,108 +43,101 @@
       z-index: 10;
     }
 
-    button {
-      margin-bottom: 10px;
-      padding: 8px 16px;
-      font-size: 16px;
-      background: crimson;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+    #board {
+      display: grid;
+      grid-template-columns: repeat(6, 80px);
+      grid-template-rows: repeat(6, 80px);
+      gap: 4px;
+      margin-bottom: 20px;
+      width: 80vw;
+      justify-content: center;
     }
 
-    button:hover {
-      background: darkred;
+    .cell {
+      width: 80px;
+      height: 80px;
+      background: #ddd;
+      border: 1px solid #aaa;
+      position: relative;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <button onclick="resetBoard()">🔄 Reiniciar Tablero</button>
-
   <div id="startZone">
-    <div class="piece" id="p0" draggable="true"></div>
-    <div class="piece" id="p1" draggable="true"></div>
-    <div class="piece" id="p2" draggable="true"></div>
+    <div class="startCell" id="s0"><div class="piece" id="p0" draggable="true" style="background-image: url('img/ficha1.png');"></div></div>
+    <div class="startCell" id="s1"><div class="piece" id="p1" draggable="true" style="background-image: url('img/ficha2.png');"></div></div>
+    <div class="startCell" id="s2"><div class="piece" id="p2" draggable="true" style="background-image: url('img/ficha3.png');"></div></div>
+    <div class="startCell" id="s3"><div class="piece" id="p3" draggable="true" style="background-image: url('img/ficha4.png');"></div></div>
+    <div class="startCell" id="s4"><div class="piece" id="p4" draggable="true" style="background-image: url('img/ficha5.png');"></div></div>
+    <div class="startCell" id="s5"><div class="piece" id="p5" draggable="true" style="background-image: url('img/ficha6.png');"></div></div>
   </div>
 
   <div id="board"></div>
 
+  <button onclick="resetBoard()">Reiniciar</button>
+
   <script>
     const board = document.getElementById('board');
-    const startZone = document.getElementById('startZone');
+    const pieces = document.querySelectorAll('.piece');
+    const startCells = document.querySelectorAll('.startCell');
 
-    // Crear celdas
+    // Crear casillas del tablero
     for (let i = 0; i < 36; i++) {
       const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.id = 'c' + i;
+      cell.classList.add('cell');
+      cell.dataset.index = i;
       board.appendChild(cell);
     }
 
-    // Drag & drop para mouse
-    document.querySelectorAll('.piece').forEach(piece => {
+    // Cargar posición desde localStorage
+    window.onload = () => {
+      pieces.forEach(piece => {
+        const saved = localStorage.getItem(piece.id);
+        if (saved) {
+          const target = document.querySelector(`[data-index="${saved}"]`);
+          if (target) target.appendChild(piece);
+        }
+      });
+    };
+
+    // Drag & Drop
+    pieces.forEach(piece => {
       piece.addEventListener('dragstart', e => {
         e.dataTransfer.setData('text/plain', e.target.id);
       });
     });
 
-    [...document.querySelectorAll('.cell'), startZone].forEach(zone => {
-      zone.addEventListener('dragover', e => e.preventDefault());
-      zone.addEventListener('drop', e => {
+    document.querySelectorAll('.cell, .startCell').forEach(cell => {
+      cell.addEventListener('dragover', e => e.preventDefault());
+      cell.addEventListener('drop', e => {
         e.preventDefault();
-        const id = e.dataTransfer.getData('text');
+        const id = e.dataTransfer.getData('text/plain');
         const piece = document.getElementById(id);
-        zone.appendChild(piece);
-        savePosition(id, zone.id);
+        cell.appendChild(piece);
+        const index = cell.dataset.index;
+        if (index) {
+          localStorage.setItem(id, index);
+        } else {
+          localStorage.removeItem(id);
+        }
       });
     });
 
-    // Soporte táctil
-    document.querySelectorAll('.piece').forEach(piece => {
-      piece.addEventListener('touchstart', e => {
-        e.preventDefault();
-        piece.dataset.touching = true;
-      });
-
-      piece.addEventListener('touchmove', e => {
-        const touch = e.touches[0];
-        piece.style.left = touch.pageX - 25 + 'px';
-        piece.style.top = touch.pageY - 25 + 'px';
-        piece.style.position = 'fixed';
-      });
-
-      piece.addEventListener('touchend', e => {
-        piece.style.position = 'absolute';
-        const dropTarget = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-        const container = dropTarget.closest('.cell') || startZone;
-        container.appendChild(piece);
-        savePosition(piece.id, container.id);
-      });
-    });
-
-    // Guardar posición
-    function savePosition(pieceId, containerId) {
-      localStorage.setItem(pieceId, containerId);
-    }
-
-    // Restaurar posición
-    window.onload = () => {
-      document.querySelectorAll('.piece').forEach(piece => {
-        const saved = localStorage.getItem(piece.id);
-        const container = document.getElementById(saved);
-        if (container) container.appendChild(piece);
-      });
-    };
-
-    // Reiniciar tablero
+    // Reiniciar
     function resetBoard() {
-      document.querySelectorAll('.piece').forEach(piece => {
-        startZone.appendChild(piece);
-        localStorage.setItem(piece.id, 'startZone');
+      pieces.forEach((piece, i) => {
+        startCells[i].appendChild(piece);
+        localStorage.removeItem(piece.id);
       });
     }
   </script>
+
 </body>
 </html>
