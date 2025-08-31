@@ -1,151 +1,184 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tablero Interactivo</title>
+  <meta charset="UTF-8">
+  <title>Tablero Freestyle</title>
   <style>
     body {
-      background: #111;
-      color: #eee;
+      background: #f0f0f0;
       font-family: sans-serif;
+      margin: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
+      justify-content: center; /* Centrado vertical */
+      min-height: 100vh;
     }
 
-    #reset {
-      margin-bottom: 10px;
-      padding: 8px 16px;
+    #resetBtn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
+      z-index: 100;
+    }
+
+    #startZone {
+      display: flex;
+      gap: 13px;
+      margin: 30px auto 50px auto;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .startCell {
-      width: 110px;
-      height: 110px;
+      width: 109px;
+      height: 109px;
       border: 2px dashed #999;
+      position: relative;
       background: #fff;
       border-radius: 10px;
-      position: relative;
-      margin-bottom: 20px;
     }
 
     .piece {
       width: 94px;
       height: 94px;
-      top: 8px;
-      left: 8px;
       background-size: cover;
       background-position: center;
       border-radius: 50%;
       position: absolute;
+      top: 7px;
+      left: 7px;
       touch-action: none;
       cursor: grab;
       z-index: 10;
       border: 2px solid #333;
     }
 
+    #boardWrapper {
+      position: relative;
+      width: 95vw;
+      max-width: 1170px;
+      margin-bottom: 30px;
+      transform: rotate(180deg);
+    }
+
     #board {
       display: grid;
       grid-template-columns: repeat(10, 94px);
       grid-template-rows: repeat(4, 94px);
-      gap: 4px;
-      padding: 10px;
+      gap: 5px;
       background: #222;
+      padding: 13px;
       border-radius: 10px;
     }
 
     .cell {
       width: 94px;
       height: 94px;
-      border: 1px solid #aaa;
       position: relative;
+      border: 1px solid #aaa;
     }
 
+    .cell:nth-child(3n+1) { background: #3498db; }
+    .cell:nth-child(3n+2) { background: #e74c3c; }
+    .cell:nth-child(3n)   { background: #ffffff; }
+
     .extra {
+      position: absolute;
       width: 94px;
       height: 94px;
-      background: #000;
       border: 2px solid #000;
-      position: absolute;
+      background: #000;
       z-index: 5;
+    }
+
+    #extra1 {
+      top: 50%;
+      left: -100px;
+      transform: translateY(-50%);
+    }
+
+    #extra2 {
+      top: -100px;
+      right: 0;
     }
   </style>
 </head>
 <body>
-  <button id="reset">🔄 Reiniciar</button>
-  <div class="startCell" id="startZone"></div>
-  <div id="board"></div>
+
+  <button id="resetBtn" onclick="resetBoard()">Reiniciar</button>
+
+  <div id="boardWrapper">
+    <div id="board"></div>
+    <div class="extra" id="extra1"></div>
+    <div class="extra" id="extra2"></div>
+  </div>
+
+  <div id="startZone">
+    <div class="startCell" id="s0"><div class="piece" id="p0" draggable="true" style="background-image: url('img/ficha1.png');"></div></div>
+    <div class="startCell" id="s1"><div class="piece" id="p1" draggable="true" style="background-image: url('img/ficha2.png');"></div></div>
+    <div class="startCell" id="s2"><div class="piece" id="p2" draggable="true" style="background-image: url('img/ficha3.png');"></div></div>
+    <div class="startCell" id="s3"><div class="piece" id="p3" draggable="true" style="background-image: url('img/ficha4.png');"></div></div>
+    <div class="startCell" id="s4"><div class="piece" id="p4" draggable="true" style="background-image: url('img/ficha5.png');"></div></div>
+    <div class="startCell" id="s5"><div class="piece" id="p5" draggable="true" style="background-image: url('img/ficha6.png');"></div></div>
+  </div>
 
   <script>
-    const board = document.getElementById("board");
-    const resetBtn = document.getElementById("reset");
-    const startZone = document.getElementById("startZone");
+    const board = document.getElementById('board');
+    const pieces = document.querySelectorAll('.piece');
+    const startCells = document.querySelectorAll('.startCell');
+    const extra1 = document.getElementById('extra1');
+    const extra2 = document.getElementById('extra2');
 
-    function createBoard() {
-      board.innerHTML = "";
-      for (let i = 0; i < 40; i++) {
-        const cell = document.createElement("div");
-        cell.className = "cell";
-        cell.dataset.index = i;
-        board.appendChild(cell);
-      }
+    for (let i = 0; i < 40; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      board.appendChild(cell);
     }
 
-    function createPiece(id, color) {
-      const piece = document.createElement("div");
-      piece.className = "piece";
-      piece.style.background = color;
-      piece.id = id;
-      piece.draggable = true;
-
-      piece.addEventListener("dragstart", (e) => {
-        e.dataTransfer.setData("text/plain", id);
+    window.onload = () => {
+      pieces.forEach(piece => {
+        const saved = localStorage.getItem(piece.id);
+        if (saved) {
+          const target = document.querySelector(`[data-index="${saved}"]`) ||
+                         document.getElementById(saved);
+          if (target) target.appendChild(piece);
+        }
       });
+    };
 
-      return piece;
-    }
-
-    function enableDropZones() {
-      document.querySelectorAll(".cell, .startCell").forEach((zone) => {
-        zone.addEventListener("dragover", (e) => e.preventDefault());
-        zone.addEventListener("drop", (e) => {
-          e.preventDefault();
-          const id = e.dataTransfer.getData("text/plain");
-          const piece = document.getElementById(id);
-          zone.appendChild(piece);
-          localStorage.setItem(id, zone.dataset.index || "start");
-        });
+    pieces.forEach(piece => {
+      piece.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.id);
       });
-    }
+    });
 
-    function loadMemory(id) {
-      const saved = localStorage.getItem(id);
-      if (saved === "start") {
-        startZone.appendChild(document.getElementById(id));
-      } else {
-        const target = document.querySelector(`[data-index='${saved}']`);
-        if (target) target.appendChild(document.getElementById(id));
-      }
-    }
+    document.querySelectorAll('.cell, .startCell, .extra').forEach(cell => {
+      cell.addEventListener('dragover', e => e.preventDefault());
+      cell.addEventListener('drop', e => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text/plain');
+        const piece = document.getElementById(id);
+        cell.appendChild(piece);
+        const index = cell.dataset.index || cell.id;
+        if (index) {
+          localStorage.setItem(id, index);
+        }
+      });
+    });
 
     function resetBoard() {
-      localStorage.clear();
-      startZone.appendChild(document.getElementById("p1"));
-      startZone.appendChild(document.getElementById("p2"));
+      pieces.forEach((piece, i) => {
+        startCells[i].appendChild(piece);
+        localStorage.removeItem(piece.id);
+      });
     }
-
-    createBoard();
-    const p1 = createPiece("p1", "tomato");
-    const p2 = createPiece("p2", "deepskyblue");
-    startZone.appendChild(p1);
-    startZone.appendChild(p2);
-    enableDropZones();
-    loadMemory("p1");
-    loadMemory("p2");
-    resetBtn.addEventListener("click", resetBoard);
   </script>
+
 </body>
 </html>
