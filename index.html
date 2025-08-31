@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Freestyle Board</title>
+  <style>
+    body { margin: 0; background: #111; color: #fff; font-family: sans-serif; }
+    #board {
+      width: 100vw; height: 100vh;
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 2px; background: #333;
+    }
+    .cell {
+      border: 1px solid #444;
+      position: relative;
+    }
+    .piece {
+      width: 80%; height: 80%;
+      background: crimson;
+      border-radius: 50%;
+      position: absolute;
+      top: 10%; left: 10%;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="board">
+    <!-- 36 cells -->
+    <div class="cell" id="c0"></div>
+    <div class="cell" id="c1"></div>
+    <!-- ... hasta c35 -->
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    for (let i = 0; i < 36; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.id = 'c' + i;
+      board.appendChild(cell);
+    }
+
+    // Crear fichas
+    for (let i = 0; i < 6; i++) {
+      const piece = document.createElement('div');
+      piece.className = 'piece';
+      piece.draggable = true;
+      piece.id = 'p' + i;
+      document.getElementById('c' + i).appendChild(piece);
+    }
+
+    // Drag & drop
+    document.querySelectorAll('.piece').forEach(piece => {
+      piece.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+      });
+    });
+
+    document.querySelectorAll('.cell').forEach(cell => {
+      cell.addEventListener('dragover', e => e.preventDefault());
+      cell.addEventListener('drop', e => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const piece = document.getElementById(id);
+        e.target.appendChild(piece);
+      });
+    });
+  </script>
+</body>
+</html>
