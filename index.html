@@ -12,7 +12,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* Centrado vertical */
+      justify-content: center;
       min-height: 100vh;
     }
 
@@ -101,11 +101,6 @@
       left: -100px;
       transform: translateY(-50%);
     }
-
-    #extra2 {
-      top: -100px;
-      right: 0;
-    }
   </style>
 </head>
 <body>
@@ -115,7 +110,7 @@
   <div id="boardWrapper">
     <div id="board"></div>
     <div class="extra" id="extra1"></div>
-    <div class="extra" id="extra2"></div>
+    <!-- Casilla extra2 eliminada -->
   </div>
 
   <div id="startZone">
@@ -131,8 +126,6 @@
     const board = document.getElementById('board');
     const pieces = document.querySelectorAll('.piece');
     const startCells = document.querySelectorAll('.startCell');
-    const extra1 = document.getElementById('extra1');
-    const extra2 = document.getElementById('extra2');
 
     for (let i = 0; i < 40; i++) {
       const cell = document.createElement('div');
