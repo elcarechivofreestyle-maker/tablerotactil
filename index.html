@@ -86,21 +86,6 @@
     .cell:nth-child(3n+1) { background: #3498db; }
     .cell:nth-child(3n+2) { background: #e74c3c; }
     .cell:nth-child(3n)   { background: #ffffff; }
-
-    .extra {
-      position: absolute;
-      width: 94px;
-      height: 94px;
-      border: 2px solid #000;
-      background: #000;
-      z-index: 5;
-    }
-
-    #extra1 {
-      top: 50%;
-      left: -100px;
-      transform: translateY(-50%);
-    }
   </style>
 </head>
 <body>
@@ -109,8 +94,7 @@
 
   <div id="boardWrapper">
     <div id="board"></div>
-    <div class="extra" id="extra1"></div>
-    <!-- Casilla extra2 eliminada -->
+    <!-- Eliminado: <div class="extra" id="extra1"></div> -->
   </div>
 
   <div id="startZone">
@@ -151,7 +135,7 @@
       });
     });
 
-    document.querySelectorAll('.cell, .startCell, .extra').forEach(cell => {
+    document.querySelectorAll('.cell, .startCell').forEach(cell => {
       cell.addEventListener('dragover', e => e.preventDefault());
       cell.addEventListener('drop', e => {
         e.preventDefault();
