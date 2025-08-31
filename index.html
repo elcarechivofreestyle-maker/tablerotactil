@@ -7,17 +7,25 @@
     body {
       background: #f0f0f0;
       font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       margin: 0;
       padding: 20px;
+    }
+
+    #resetBtn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      z-index: 100;
     }
 
     #startZone {
       display: flex;
       gap: 10px;
-      margin-bottom: 20px;
+      margin: 80px auto 20px auto;
+      justify-content: center;
     }
 
     .startCell {
@@ -41,6 +49,7 @@
       touch-action: none;
       cursor: grab;
       z-index: 10;
+      border: 2px solid #333;
     }
 
     #board {
@@ -48,7 +57,7 @@
       grid-template-columns: repeat(6, 80px);
       grid-template-rows: repeat(6, 80px);
       gap: 4px;
-      margin-bottom: 20px;
+      margin: 0 auto 40px auto;
       width: 80vw;
       justify-content: center;
     }
@@ -56,19 +65,19 @@
     .cell {
       width: 80px;
       height: 80px;
-      background: #ddd;
-      border: 1px solid #aaa;
       position: relative;
+      border: 1px solid #aaa;
     }
 
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    /* Colores intercalados */
+    .cell:nth-child(3n+1) { background: #3498db; }   /* Azul */
+    .cell:nth-child(3n+2) { background: #e74c3c; }   /* Rojo */
+    .cell:nth-child(3n)   { background: #ffffff; }   /* Blanco */
   </style>
 </head>
 <body>
+
+  <button id="resetBtn" onclick="resetBoard()">Reiniciar</button>
 
   <div id="startZone">
     <div class="startCell" id="s0"><div class="piece" id="p0" draggable="true" style="background-image: url('img/ficha1.png');"></div></div>
@@ -80,8 +89,6 @@
   </div>
 
   <div id="board"></div>
-
-  <button onclick="resetBoard()">Reiniciar</button>
 
   <script>
     const board = document.getElementById('board');
