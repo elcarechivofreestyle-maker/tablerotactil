@@ -14,16 +14,21 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      position: relative;
     }
 
     #resetBtn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
       z-index: 100;
+      background: crimson;
+      color: white;
+      border: none;
+      border-radius: 6px;
     }
 
     #startZone {
@@ -63,7 +68,6 @@
       width: 95vw;
       max-width: 1170px;
       margin-bottom: 30px;
-      /* transform: rotate(180deg); ← eliminado */
     }
 
     #board {
